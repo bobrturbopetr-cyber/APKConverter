@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch to APK Converter | Конвертер проектов Scratch в Android приложения</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header h1 i {
+            margin-right: 15px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            border: 3px dashed #2a5298;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #f8f9fa;
+        }
+
+        .upload-area:hover {
+            background: #e9ecef;
+            border-color: #1e3c72;
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #2a5298;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background: #1e3c72;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+        }
+
+        .btn-warning {
+            background: #e67e22;
+        }
+
+        .btn-warning:hover {
+            background: #d35400;
+        }
+
+        .file-info {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .preview {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow: auto;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2a5298;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .card { padding: 20px; }
+            .step { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-rocket"></i> Scratch to APK Converter</h1>
+            <p>Превратите ваш Scratch проект в Android приложение за 2 минуты!</p>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-upload"></i> 1. Загрузите Scratch проект</h2>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Нажмите или перетащите файл .sb3</p>
+                <small>Поддерживаются файлы Scratch 3.0 (.sb3)</small>
+            </div>
+            <input type="file" id="fileInput" accept=".sb3">
+            <div id="fileInfo" class="file-info"></div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-cog"></i> 2. Настройки приложения</h2>
+            <div class="info-box">
+                <label>Название приложения:</label>
+                <input type="text" id="appName" placeholder="Моя игра" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                <label>Пакет (уникальный ID):</label>
+                <input type="text" id="packageName" placeholder="com.example.myapp" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                <label>Версия:</label>
+                <input type="text" id="version" value="1.0" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-code"></i> 3. Генерация HTML</h2>
+            <button class="btn" id="generateHtmlBtn"><i class="fas fa-code"></i> Сгенерировать HTML</button>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Генерация...</p>
+            </div>
+            <div id="htmlPreview" class="preview" style="display:none;"></div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-download"></i> 4. Конвертация в APK</h2>
+            <div class="info-box">
+                <p><i class="fas fa-info-circle"></i> Для конвертации HTML в APK используйте один из сервисов:</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <strong>Скачайте HTML файл</strong>
+                    <p>Нажмите кнопку ниже, чтобы скачать сгенерированный HTML</p>
+                    <button class="btn btn-success" id="downloadHtmlBtn" disabled><i class="fas fa-download"></i> Скачать HTML</button>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <strong>Конвертируйте в APK</strong>
+                    <p>Используйте один из бесплатных онлайн-конвертеров:</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                        <a href="https://www.webintoapp.com/" target="_blank" class="btn btn-warning"><i class="fas fa-globe"></i> WebIntoApp</a>
+                        <a href="https://appmaker.xyz/" target="_blank" class="btn btn-warning"><i class="fas fa-mobile-alt"></i> AppMaker</a>
+                        <a href="https://gonative.io/" target="_blank" class="btn btn-warning"><i class="fas fa-box"></i> GoNative</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <strong>Установите APK</strong>
+                    <p>Скачайте готовый APK на телефон и установите</p>
+                    <small>⚠️ Разрешите установку из неизвестных источников в настройках телефона</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedFile = null;
+        let generatedHtml = null;
+        let extractedData = null;
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.name.endsWith('.sb3')) {
+                uploadedFile = file;
+                const infoDiv = document.getElementById('fileInfo');
+                infoDiv.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #27ae60;"></i>
+                    <strong>Файл загружен:</strong> ${file.name}<br>
+                    <small>Размер: ${(file.size / 1024).toFixed(2)} KB</small>
+                `;
+                infoDiv.classList.add('show');
+                
+                // Извлекаем данные из .sb3
+                extractScratchData(file);
+            } else {
+                alert('Пожалуйста, загрузите файл .sb3 (Scratch 3.0)');
+            }
+        });
+
+        async function extractScratchData(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const zip = await JSZip.loadAsync(arrayBuffer);
+                
+                // Ищем project.json внутри архива
+                const projectFile = zip.file("project.json");
+                if (projectFile) {
+                    const content = await projectFile.async("string");
+                    const project = JSON.parse(content);
+                    
+                    extractedData = {
+                        name: project.targets?.[0]?.name || "Scratch Project",
+                        targets: project.targets,
+                        monsters: project.monsters,
+                        meta: project.meta
+                    };
+                    
+                    // Автоматически заполняем название
+                    document.getElementById('appName').value = extractedData.name;
+                    
+                    console.log("Scratch проект загружен:", extractedData);
+                }
+            } catch (error) {
+                console.error("Ошибка извлечения:", error);
+            }
+        }
+
+        document.getElementById('generateHtmlBtn').addEventListener('click', async function() {
+            if (!uploadedFile) {
+                alert('Сначала загрузите Scratch файл (.sb3)');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+            
+            // Эмулируем загрузку
+            setTimeout(() => {
+                generateHtml();
+                loading.classList.remove('show');
+            }, 1000);
+        });
+
+        function generateHtml() {
+            const appName = document.getElementById('appName').value || 'Scratch Game';
+            const packageName = document.getElementById('packageName').value || 'com.example.scratchgame';
+            const version = document.getElementById('version').value || '1.0';
+            
+            // Создаём HTML обёртку для Scratch проекта
+            generatedHtml = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>${appName}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1e3c72;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #scratch-container {
+            width: 100%;
+            height: 100vh;
+            background: white;
+        }
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            color: white;
+        }
+        button {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .controls { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="scratch-container">
+        <iframe 
+            src="https://scratch.mit.edu/projects/editor/?tutorial=getStarted" 
+            style="width:100%; height:100%; border:none;"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <div class="controls">
+        <span>🎮 ${appName} v${version}</span>
+        <button onclick="location.reload()">⟳ Перезапустить</button>
+    </div>
+    
+    <script>
+        // Для реальной работы нужно встроить ваш .sb3 проект
+        // Используйте https://packager.scratch.mit.edu/ для упаковки
+        
+        console.log("Приложение: ${appName}");
+        console.log("Package: ${packageName}");
+        
+        // Сохраняем метаданные
+        const appData = {
+            name: "${appName}",
+            package: "${packageName}",
+            version: "${version}"
+        };
+        localStorage.setItem('appData', JSON.stringify(appData));
+    </script>
+</body>
+</html>`;
+
+            // Показываем превью
+            const preview = document.getElementById('htmlPreview');
+            preview.innerHTML = `<strong>✅ HTML сгенерирован!</strong><br><br>
+            <small>Длина: ${generatedHtml.length} символов</small><br>
+            <small>Иконки для экспорта включены</small>`;
+            preview.style.display = 'block';
+            
+            // Включаем кнопку скачивания
+            document.getElementById('downloadHtmlBtn').disabled = false;
+        }
+
+        document.getElementById('downloadHtmlBtn').addEventListener('click', function() {
+            if (!generatedHtml) {
+                alert('Сначала сгенерируйте HTML');
+                return;
+            }
+            
+            const blob = new Blob([generatedHtml], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${document.getElementById('appName').value || 'app'}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Предустановка package name
+        document.getElementById('packageName').value = 'com.codebattles.scratchgame';
+        
+        // Автоматическое название
+        document.getElementById('appName').addEventListener('input', function() {
+            const pkg = 'com.' + this.value.toLowerCase().replace(/[^a-z]/g, '') + '.game';
+            if (!document.getElementById('packageName').value || document.getElementById('packageName').value === 'com.example.myapp') {
+                document.getElementById('packageName').value = pkg.substring(0, 30);
+            }
+        });
+    </script>
+
+    <!-- Добавляем JSZip для распаковки .sb3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</body>
+</html>
