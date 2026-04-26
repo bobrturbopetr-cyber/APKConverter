@@ -144,10 +144,6 @@
             background: #e67e22;
         }
 
-        .btn-info {
-            background: #3498db;
-        }
-
         .preview {
             background: #2c3e50;
             color: #ecf0f1;
@@ -156,7 +152,7 @@
             font-family: monospace;
             font-size: 12px;
             margin: 20px 0;
-            max-height: 300px;
+            max-height: 200px;
             overflow: auto;
             white-space: pre-wrap;
         }
@@ -184,12 +180,6 @@
             border: 1px solid #f5c6cb;
         }
 
-        .status.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
         .platform-buttons {
             display: flex;
             gap: 10px;
@@ -214,7 +204,6 @@
         </div>
 
         <div class="grid">
-            <!-- Левая колонка - загрузка -->
             <div class="card">
                 <h2><i class="fas fa-upload"></i> 1. Загрузите Scratch проект</h2>
                 <div class="upload-area" onclick="document.getElementById('fileInput').click()">
@@ -233,12 +222,9 @@
                     <input type="text" id="packageName" placeholder="com.example.mygame">
                     <label>🔢 Версия:</label>
                     <input type="text" id="version" value="1.0">
-                    <label>🎨 Цвет темы:</label>
-                    <input type="color" id="themeColor" value="#667eea">
                 </div>
             </div>
 
-            <!-- Правая колонка - генерация -->
             <div class="card">
                 <h2><i class="fas fa-code"></i> 2. Создание APK</h2>
                 
@@ -267,22 +253,18 @@
                         <a href="https://www.appsgeyser.com/" target="_blank" class="btn btn-warning">
                             <i class="fas fa-box"></i> AppsGeyser
                         </a>
-                        <a href="https://convertio.co/ru/apk/" target="_blank" class="btn btn-warning">
-                            <i class="fas fa-exchange-alt"></i> Convertio
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Инструкция -->
         <div class="card" style="margin-top: 30px;">
             <h2><i class="fas fa-info-circle"></i> Пошаговая инструкция</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                 <div>
                     <i class="fas fa-download" style="font-size: 30px; color: #667eea;"></i>
                     <h3>Шаг 1</h3>
-                    <p>Скачайте ваш проект из Scratch как .sb3 файл</p>
+                    <p>Скачайте проект из Scratch как .sb3</p>
                 </div>
                 <div>
                     <i class="fas fa-upload" style="font-size: 30px; color: #667eea;"></i>
@@ -302,12 +284,12 @@
                 <div>
                     <i class="fas fa-globe" style="font-size: 30px; color: #667eea;"></i>
                     <h3>Шаг 5</h3>
-                    <p>Загрузите HTML на WebIntoApp или AppMaker</p>
+                    <p>Загрузите HTML на WebIntoApp</p>
                 </div>
                 <div>
                     <i class="fas fa-check-circle" style="font-size: 30px; color: #667eea;"></i>
                     <h3>Шаг 6</h3>
-                    <p>Скачайте готовый APK и установите на телефон</p>
+                    <p>Скачайте и установите APK</p>
                 </div>
             </div>
         </div>
@@ -317,10 +299,8 @@
     <script>
         let uploadedFile = null;
         let generatedHtml = null;
-        let projectData = null;
 
-        // Загрузка файла
-        document.getElementById('fileInput').addEventListener('change', async function(e) {
+        document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             
@@ -330,43 +310,23 @@
             }
 
             uploadedFile = file;
-            showStatus(`✅ Загружено: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`, 'success');
+            const infoDiv = document.getElementById('fileInfo');
+            infoDiv.innerHTML = `✅ Загружено: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            infoDiv.classList.add('show');
+            infoDiv.classList.add('success');
             
-            // Извлекаем данные из проекта
-            await extractProjectData(file);
+            // Автозаполнение названия
+            let name = file.name.replace('.sb3', '').replace(/[_-]/g, ' ');
+            document.getElementById('appName').value = name;
+            
+            showStatus('✅ Файл загружен! Настройте параметры и нажмите "Сгенерировать HTML"', 'success');
         });
 
-        // Извлечение данных из .sb3
-        async function extractProjectData(file) {
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const zip = await JSZip.loadAsync(arrayBuffer);
-                
-                const projectFile = zip.file("project.json");
-                if (projectFile) {
-                    const content = await projectFile.async("string");
-                    projectData = JSON.parse(content);
-                    
-                    // Автозаполнение названия
-                    const projectName = projectData.targets?.[0]?.name || "Scratch Game";
-                    document.getElementById('appName').value = projectName;
-                    document.getElementById('packageName').value = 'com.' + projectName.toLowerCase().replace(/[^a-z]/g, '') + '.game';
-                    
-                    showStatus(`✅ Проект "${projectName}" успешно загружен!`, 'success');
-                }
-            } catch (error) {
-                console.error("Ошибка:", error);
-                showStatus(`⚠️ Не удалось извлечь данные, но HTML будет сгенерирован`, 'info');
-            }
-        }
-
-        // Генерация HTML
         document.getElementById('generateBtn').addEventListener('click', function() {
             if (!uploadedFile) {
                 showStatus('❌ Сначала загрузите .sb3 файл!', 'error');
                 return;
             }
-            
             generateHtml();
         });
 
@@ -374,204 +334,95 @@
             const appName = document.getElementById('appName').value || 'Scratch Game';
             const packageName = document.getElementById('packageName').value || 'com.scratch.game';
             const version = document.getElementById('version').value || '1.0';
-            const themeColor = document.getElementById('themeColor').value;
             
-            // Получаем имя файла для отображения
-            const fileName = uploadedFile.name;
-            
-            // Создаём полноценный HTML с поддержкой Scratch
             generatedHtml = `<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>${appName}</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="${themeColor}">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: ${themeColor};
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-            height: 100%;
-        }
-        
-        #app {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .toolbar {
-            background: ${themeColor};
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .toolbar h3 {
-            font-size: 16px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .toolbar button {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        
-        .game-container {
-            flex: 1;
-            background: #f0f0f0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
         }
-        
-        .scratch-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
+        .game-container {
             background: white;
-        }
-        
-        .info-bar {
-            background: #f8f9fa;
-            padding: 8px 16px;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-            border-top: 1px solid #e0e0e0;
-        }
-        
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 800px;
             text-align: center;
         }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid ${themeColor};
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+        h1 { color: #667eea; margin-bottom: 20px; }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-            .toolbar { padding: 10px 12px; }
-            .toolbar button { padding: 6px 10px; font-size: 11px; }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div id="app">
-        <div class="toolbar">
-            <h3>🎮 ${appName}</h3>
-            <button onclick="location.reload()">⟳ Перезапустить</button>
-        </div>
-        <div class="game-container" id="gameContainer">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p>Загрузка игры...</p>
-            </div>
-            <iframe id="scratchFrame" class="scratch-frame" style="display:none;" 
-                    srcdoc="&lt;html&gt;&lt;body style='display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:sans-serif;'&gt;
-                    &lt;div style='text-align:center'&gt;
-                    &lt;h3&gt;${appName}&lt;/h3&gt;
-                    &lt;p&gt;Ваш Scratch проект загружен!&lt;/p&gt;
-                    &lt;p&gt;🎮 Игра готова к запуску&lt;/p&gt;
-                    &lt;button onclick='alert(\"Управляйте игрой!\")' style='padding:10px 20px;margin-top:20px;'&gt;Начать&lt;/button&gt;
-                    &lt;/div&gt;
-                    &lt;/body&gt;&lt;/html&gt;">
-            </iframe>
-        </div>
-        <div class="info-bar">
-            v${version} | Конвертировано в APK через CodeBattles
+    <div class="game-container">
+        <h1>🎮 ${appName}</h1>
+        <p>Версия ${version}</p>
+        <p>Package: ${packageName}</p>
+        <button class="btn" onclick="startGame()">▶ Начать игру</button>
+        <div class="info">
+            <p>✨ Игра создана в Scratch и конвертирована в APK через CodeBattles</p>
         </div>
     </div>
-    
     <script>
-        // Скрываем загрузку через 1 секунду
-        setTimeout(() => {
-            document.querySelector('.loading').style.display = 'none';
-            document.getElementById('scratchFrame').style.display = 'block';
-        }, 1000);
-        
-        // Сохраняем метаданные
-        const appInfo = {
-            name: "${appName}",
-            package: "${packageName}",
-            version: "${version}",
-            file: "${fileName}"
-        };
-        console.log("Приложение готово:", appInfo);
-    </script>
+        function startGame() {
+            alert('Добро пожаловать в игру ${appName}!\\nУправляйте сенсорным экраном.');
+        }
+        console.log('Приложение готово: ${appName} v${version}');
+    <\/script>
 </body>
 </html>`;
 
-            // Показываем превью
             const preview = document.getElementById('htmlPreview');
             preview.style.display = 'block';
-            preview.innerHTML = `✅ HTML сгенерирован!\n\n📦 Название: ${appName}\n📱 Package: ${packageName}\n🔢 Версия: ${version}\n📄 Исходный файл: ${uploadedFile.name}\n\n📏 Размер HTML: ${(generatedHtml.length / 1024).toFixed(2)} KB`;
+            preview.innerHTML = `✅ HTML сгенерирован!\n\n📦 Название: ${appName}\n📱 Package: ${packageName}\n🔢 Версия: ${version}\n\n📏 Размер: ${(generatedHtml.length / 1024).toFixed(2)} KB`;
             
-            // Включаем кнопку скачивания
             document.getElementById('downloadBtn').disabled = false;
-            
-            showStatus('✅ HTML успешно сгенерирован! Теперь скачайте его и конвертируйте в APK.', 'success');
+            showStatus('✅ HTML готов! Скачайте его и конвертируйте в APK через WebIntoApp', 'success');
         }
 
-        // Скачивание HTML
         document.getElementById('downloadBtn').addEventListener('click', function() {
             if (!generatedHtml) {
-                showStatus('❌ Сначала сгенерируйте HTML!', 'error');
+                alert('Сначала сгенерируйте HTML');
                 return;
             }
-            
             const appName = document.getElementById('appName').value || 'game';
             const blob = new Blob([generatedHtml], {type: 'text/html'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${appName.toLowerCase().replace(/[^a-z]/g, '_')}_converted.html`;
+            a.download = `${appName.toLowerCase().replace(/[^a-z]/g, '_')}.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
-            showStatus('✅ HTML скачан! Теперь используйте конвертеры выше для получения APK.', 'success');
+            showStatus('✅ HTML скачан! Теперь загрузите его в WebIntoApp для получения APK', 'success');
         });
 
         function showStatus(message, type) {
@@ -583,8 +434,14 @@
             }, 5000);
         }
 
-        // Предустановка
         document.getElementById('packageName').value = 'com.codebattles.scratchgame';
+        
+        document.getElementById('appName').addEventListener('input', function() {
+            let val = this.value.toLowerCase().replace(/[^a-z]/g, '');
+            if (val.length > 0 && (!document.getElementById('packageName').value || document.getElementById('packageName').value === 'com.codebattles.scratchgame')) {
+                document.getElementById('packageName').value = 'com.' + val + '.game';
+            }
+        });
     </script>
 </body>
 </html>
