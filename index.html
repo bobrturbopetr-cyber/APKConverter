@@ -3,111 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratch to APK Converter | Конвертер Scratch проектов в Android приложения</title>
+    <title>Scratch to APK Converter</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .header h1 i {
-            margin-right: 15px;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .card h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 40px; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .card h2 { color: #667eea; margin-bottom: 20px; }
         .upload-area {
             border: 3px dashed #667eea;
             border-radius: 15px;
             padding: 50px;
             text-align: center;
             cursor: pointer;
-            transition: 0.3s;
             background: #f8f9fa;
         }
-
-        .upload-area:hover {
-            background: #e9ecef;
-            border-color: #764ba2;
-        }
-
-        .upload-area i {
-            font-size: 60px;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .info-box {
-            background: #e8f4f8;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-        }
-
-        .info-box input, .info-box select {
+        .upload-area i { font-size: 60px; color: #667eea; margin-bottom: 15px; }
+        input[type="file"] { display: none; }
+        .info-box { background: #e8f4f8; padding: 20px; border-radius: 15px; margin: 20px 0; }
+        .info-box input {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 14px;
         }
-
-        .info-box input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         .btn {
             background: #667eea;
             color: white;
@@ -116,84 +45,30 @@
             border-radius: 10px;
             font-size: 16px;
             cursor: pointer;
-            transition: 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 10px;
             margin: 10px 5px;
         }
-
-        .btn:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: #27ae60;
-        }
-
-        .btn-success:hover {
-            background: #219a52;
-        }
-
-        .btn-warning {
-            background: #f39c12;
-        }
-
-        .btn-warning:hover {
-            background: #e67e22;
-        }
-
+        .btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .btn-success { background: #27ae60; }
+        .btn-warning { background: #f39c12; }
         .preview {
             background: #2c3e50;
             color: #ecf0f1;
             padding: 15px;
             border-radius: 10px;
             font-family: monospace;
-            font-size: 12px;
             margin: 20px 0;
             max-height: 200px;
             overflow: auto;
-            white-space: pre-wrap;
         }
-
-        .status {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: none;
-        }
-
-        .status.show {
-            display: block;
-        }
-
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .platform-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-
-        @media (max-width: 900px) {
-            .grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .header h1 { font-size: 1.8rem; }
-        }
+        .status { padding: 15px; border-radius: 10px; margin: 15px 0; display: none; }
+        .status.show { display: block; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .platform-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -202,7 +77,6 @@
             <h1><i class="fas fa-gamepad"></i> Scratch to APK Converter</h1>
             <p>Превратите ваш Scratch проект в Android приложение за 5 минут!</p>
         </div>
-
         <div class="grid">
             <div class="card">
                 <h2><i class="fas fa-upload"></i> 1. Загрузите Scratch проект</h2>
@@ -212,89 +86,46 @@
                     <small>Поддерживаются файлы Scratch 3.0 (.sb3)</small>
                 </div>
                 <input type="file" id="fileInput" accept=".sb3">
-                <div id="fileInfo" class="status info"></div>
-
+                <div id="fileInfo" class="status"></div>
                 <div class="info-box">
-                    <h3><i class="fas fa-cog"></i> Настройки приложения</h3>
-                    <label>🏷️ Название приложения:</label>
+                    <h3>Настройки приложения</h3>
+                    <label>Название:</label>
                     <input type="text" id="appName" placeholder="Моя игра">
-                    <label>📦 Package ID:</label>
+                    <label>Package ID:</label>
                     <input type="text" id="packageName" placeholder="com.example.mygame">
-                    <label>🔢 Версия:</label>
+                    <label>Версия:</label>
                     <input type="text" id="version" value="1.0">
                 </div>
             </div>
-
             <div class="card">
                 <h2><i class="fas fa-code"></i> 2. Создание APK</h2>
-                
-                <button class="btn" id="generateBtn">
-                    <i class="fas fa-magic"></i> Сгенерировать HTML
-                </button>
-                
+                <button class="btn" id="generateBtn"><i class="fas fa-magic"></i> Сгенерировать HTML</button>
                 <div id="status" class="status"></div>
-                
                 <div id="htmlPreview" class="preview" style="display:none;"></div>
-
-                <button class="btn btn-success" id="downloadBtn" disabled>
-                    <i class="fas fa-download"></i> Скачать HTML
-                </button>
-
-                <div class="info-box" style="margin-top: 20px;">
-                    <h3><i class="fas fa-rocket"></i> 3. Конвертация в APK</h3>
-                    <p>Скачайте HTML и используйте любой из сервисов:</p>
+                <button class="btn btn-success" id="downloadBtn" disabled><i class="fas fa-download"></i> Скачать HTML</button>
+                <div class="info-box">
+                    <h3>3. Конвертация в APK</h3>
+                    <p>Скачайте HTML и используйте сервисы:</p>
                     <div class="platform-buttons">
-                        <a href="https://www.webintoapp.com/" target="_blank" class="btn btn-warning">
-                            <i class="fab fa-chrome"></i> WebIntoApp
-                        </a>
-                        <a href="https://appmaker.xyz/web-to-apk/" target="_blank" class="btn btn-warning">
-                            <i class="fas fa-mobile-alt"></i> AppMaker
-                        </a>
-                        <a href="https://www.appsgeyser.com/" target="_blank" class="btn btn-warning">
-                            <i class="fas fa-box"></i> AppsGeyser
-                        </a>
+                        <a href="https://www.webintoapp.com/" target="_blank" class="btn btn-warning">WebIntoApp</a>
+                        <a href="https://appmaker.xyz/web-to-apk/" target="_blank" class="btn btn-warning">AppMaker</a>
+                        <a href="https://www.appsgeyser.com/" target="_blank" class="btn btn-warning">AppsGeyser</a>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="card" style="margin-top: 30px;">
-            <h2><i class="fas fa-info-circle"></i> Пошаговая инструкция</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                <div>
-                    <i class="fas fa-download" style="font-size: 30px; color: #667eea;"></i>
-                    <h3>Шаг 1</h3>
-                    <p>Скачайте проект из Scratch как .sb3</p>
-                </div>
-                <div>
-                    <i class="fas fa-upload" style="font-size: 30px; color: #667eea;"></i>
-                    <h3>Шаг 2</h3>
-                    <p>Загрузите файл на этот сайт</p>
-                </div>
-                <div>
-                    <i class="fas fa-code" style="font-size: 30px; color: #667eea;"></i>
-                    <h3>Шаг 3</h3>
-                    <p>Нажмите "Сгенерировать HTML"</p>
-                </div>
-                <div>
-                    <i class="fas fa-download" style="font-size: 30px; color: #667eea;"></i>
-                    <h3>Шаг 4</h3>
-                    <p>Скачайте HTML файл</p>
-                </div>
-                <div>
-                    <i class="fas fa-globe" style="font-size: 30px; color: #667eea;"></i>
-                    <h3>Шаг 5</h3>
-                    <p>Загрузите HTML на WebIntoApp</p>
-                </div>
-                <div>
-                    <i class="fas fa-check-circle" style="font-size: 30px; color: #667eea;"></i>
-                    <h3>Шаг 6</h3>
-                    <p>Скачайте и установите APK</p>
-                </div>
+            <h2>Пошаговая инструкция</h2>
+            <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; text-align: center;">
+                <div><i class="fas fa-download fa-2x"></i><h3>1.</h3><p>Скачайте .sb3 из Scratch</p></div>
+                <div><i class="fas fa-upload fa-2x"></i><h3>2.</h3><p>Загрузите файл на сайт</p></div>
+                <div><i class="fas fa-code fa-2x"></i><h3>3.</h3><p>Сгенерируйте HTML</p></div>
+                <div><i class="fas fa-download fa-2x"></i><h3>4.</h3><p>Скачайте HTML</p></div>
+                <div><i class="fas fa-globe fa-2x"></i><h3>5.</h3><p>Загрузите в WebIntoApp</p></div>
+                <div><i class="fas fa-check-circle fa-2x"></i><h3>6.</h3><p>Скачайте APK</p></div>
             </div>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         let uploadedFile = null;
@@ -303,28 +134,22 @@
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            
             if (!file.name.endsWith('.sb3')) {
-                showStatus('❌ Пожалуйста, загрузите файл .sb3 (Scratch 3.0)', 'error');
+                showStatus('Ошибка: загрузите файл .sb3', 'error');
                 return;
             }
-
             uploadedFile = file;
             const infoDiv = document.getElementById('fileInfo');
-            infoDiv.innerHTML = `✅ Загружено: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
-            infoDiv.classList.add('show');
-            infoDiv.classList.add('success');
-            
-            // Автозаполнение названия
+            infoDiv.innerHTML = 'Файл загружен: ' + file.name + ' (' + (file.size/1024).toFixed(2) + ' KB)';
+            infoDiv.classList.add('show', 'success');
             let name = file.name.replace('.sb3', '').replace(/[_-]/g, ' ');
             document.getElementById('appName').value = name;
-            
-            showStatus('✅ Файл загружен! Настройте параметры и нажмите "Сгенерировать HTML"', 'success');
+            showStatus('Файл загружен! Нажмите "Сгенерировать HTML"', 'success');
         });
 
         document.getElementById('generateBtn').addEventListener('click', function() {
             if (!uploadedFile) {
-                showStatus('❌ Сначала загрузите .sb3 файл!', 'error');
+                showStatus('Сначала загрузите .sb3 файл!', 'error');
                 return;
             }
             generateHtml();
@@ -335,76 +160,71 @@
             const packageName = document.getElementById('packageName').value || 'com.scratch.game';
             const version = document.getElementById('version').value || '1.0';
             
-            generatedHtml = `<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>${appName}</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .game-container {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-        }
-        h1 { color: #667eea; margin-bottom: 20px; }
-        .btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px;
-        }
-        .info {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <div class="game-container">
-        <h1>🎮 ${appName}</h1>
-        <p>Версия ${version}</p>
-        <p>Package: ${packageName}</p>
-        <button class="btn" onclick="startGame()">▶ Начать игру</button>
-        <div class="info">
-            <p>✨ Игра создана в Scratch и конвертирована в APK через CodeBattles</p>
-        </div>
-    </div>
-    <script>
-        function startGame() {
-            alert('Добро пожаловать в игру ${appName}!\\nУправляйте сенсорным экраном.');
-        }
-        console.log('Приложение готово: ${appName} v${version}');
-    <\/script>
-</body>
-</html>`;
-
+            generatedHtml = '<!DOCTYPE html>\n' +
+'<html lang="ru">\n' +
+'<head>\n' +
+'    <meta charset="UTF-8">\n' +
+'    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+'    <title>' + appName + '</title>\n' +
+'    <style>\n' +
+'        * { margin: 0; padding: 0; box-sizing: border-box; }\n' +
+'        body {\n' +
+'            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n' +
+'            font-family: Arial, sans-serif;\n' +
+'            min-height: 100vh;\n' +
+'            display: flex;\n' +
+'            justify-content: center;\n' +
+'            align-items: center;\n' +
+'        }\n' +
+'        .container {\n' +
+'            background: white;\n' +
+'            border-radius: 20px;\n' +
+'            padding: 40px;\n' +
+'            box-shadow: 0 20px 40px rgba(0,0,0,0.2);\n' +
+'            text-align: center;\n' +
+'            max-width: 500px;\n' +
+'        }\n' +
+'        h1 { color: #667eea; margin-bottom: 20px; }\n' +
+'        .btn {\n' +
+'            background: #667eea;\n' +
+'            color: white;\n' +
+'            border: none;\n' +
+'            padding: 15px 30px;\n' +
+'            border-radius: 10px;\n' +
+'            font-size: 18px;\n' +
+'            cursor: pointer;\n' +
+'            margin: 20px 0;\n' +
+'        }\n' +
+'        .info {\n' +
+'            background: #f0f0f0;\n' +
+'            padding: 15px;\n' +
+'            border-radius: 10px;\n' +
+'            font-size: 14px;\n' +
+'        }\n' +
+'    </style>\n' +
+'</head>\n' +
+'<body>\n' +
+'    <div class="container">\n' +
+'        <h1>' + appName + '</h1>\n' +
+'        <p>Версия ' + version + '</p>\n' +
+'        <button class="btn" onclick="alert(\\'Добро пожаловать!\\')">Начать игру</button>\n' +
+'        <div class="info">\n' +
+'            <p>Package: ' + packageName + '</p>\n' +
+'            <p>Конвертировано в APK через CodeBattles</p>\n' +
+'        </div>\n' +
+'    </div>\n' +
+'    <script>\n' +
+'        console.log("Приложение готово: ' + appName + ' v' + version + '");\n' +
+'    <\/script>\n' +
+'</body>\n' +
+'</html>';
+            
             const preview = document.getElementById('htmlPreview');
             preview.style.display = 'block';
-            preview.innerHTML = `✅ HTML сгенерирован!\n\n📦 Название: ${appName}\n📱 Package: ${packageName}\n🔢 Версия: ${version}\n\n📏 Размер: ${(generatedHtml.length / 1024).toFixed(2)} KB`;
+            preview.innerHTML = 'HTML сгенерирован!\nНазвание: ' + appName + '\nPackage: ' + packageName + '\nВерсия: ' + version + '\nРазмер: ' + (generatedHtml.length / 1024).toFixed(2) + ' KB';
             
             document.getElementById('downloadBtn').disabled = false;
-            showStatus('✅ HTML готов! Скачайте его и конвертируйте в APK через WebIntoApp', 'success');
+            showStatus('HTML готов! Скачайте его и конвертируйте в APK', 'success');
         }
 
         document.getElementById('downloadBtn').addEventListener('click', function() {
@@ -417,29 +237,31 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${appName.toLowerCase().replace(/[^a-z]/g, '_')}.html`;
+            a.download = appName.toLowerCase().replace(/[^a-z]/g, '_') + '.html';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showStatus('✅ HTML скачан! Теперь загрузите его в WebIntoApp для получения APK', 'success');
+            showStatus('HTML скачан! Загрузите его в WebIntoApp', 'success');
         });
 
         function showStatus(message, type) {
             const statusDiv = document.getElementById('status');
-            statusDiv.className = `status ${type} show`;
+            statusDiv.className = 'status ' + type + ' show';
             statusDiv.innerHTML = message;
-            setTimeout(() => {
+            setTimeout(function() {
                 statusDiv.classList.remove('show');
             }, 5000);
         }
 
         document.getElementById('packageName').value = 'com.codebattles.scratchgame';
-        
         document.getElementById('appName').addEventListener('input', function() {
-            let val = this.value.toLowerCase().replace(/[^a-z]/g, '');
-            if (val.length > 0 && (!document.getElementById('packageName').value || document.getElementById('packageName').value === 'com.codebattles.scratchgame')) {
-                document.getElementById('packageName').value = 'com.' + val + '.game';
+            var val = this.value.toLowerCase().replace(/[^a-z]/g, '');
+            if (val.length > 0) {
+                var pkgField = document.getElementById('packageName');
+                if (pkgField.value === 'com.codebattles.scratchgame' || pkgField.value === 'com.example.mygame') {
+                    pkgField.value = 'com.' + val + '.game';
+                }
             }
         });
     </script>
